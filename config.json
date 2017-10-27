@@ -1,0 +1,15 @@
+{
+    "token" : "YOUR_TOKEN",
+    "prefix" : "!",
+    
+    "bot_username" : "God",
+    "bot_game" : "touching your genitals",
+    "break_am" : "1030",
+    "break_am_format" : "hhmm",
+    "break_pm" : "1530",
+    "break_pm_format" : "hhmm",
+    "work_start" : "0900",
+    "work_start_format" : "hhmm",
+    "work_end" : "1800",
+    "work_end_format" : "hhmm"
+}
