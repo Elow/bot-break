@@ -16,6 +16,12 @@ const config = require("./config.json");
 // Load bibliothèque de punchlines
 const punchlines = require("./punchlines.json");
 
+// Load consts
+const break_am = moment(config.break_am, config.break_am_format);
+const break_pm = moment(config.break_pm, config.break_pm_format);
+const work_start = moment(config.work_start, config.work_start_format);
+const work_end = moment(config.work_end, config.work_end_format);
+
 // Client ready
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
