@@ -13,11 +13,8 @@ const client = new Discord.Client();
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
 
-// Load consts
-const break_am = moment(config.break_am, config.break_am_format);
-const break_pm = moment(config.break_pm, config.break_pm_format);
-const work_start = moment(config.work_start, config.work_start_format);
-const work_end = moment(config.work_end, config.work_end_format);
+// Load bibliothèque de punchlines
+const punchlines = require("./punchlines.json");
 
 // Client ready
 client.on("ready", () => {
@@ -76,6 +73,12 @@ client.on("message", async message => {
   if (command === "break") {
     // Display time before the next break
     let now = moment();
+    // Load consts
+    let break_am = moment(config.break_am, config.break_am_format);
+    let break_pm = moment(config.break_pm, config.break_pm_format);
+    let work_start = moment(config.work_start, config.work_start_format);
+    let work_end = moment(config.work_end, config.work_end_format);
+
     let msg = "";
 
     if (now < work_start) {
@@ -90,6 +93,15 @@ client.on("message", async message => {
         msg = `La journée est finie les gars ... Faut partir maintenant ...`;
     }
 
+    message.channel.send(msg);
+  }
+
+  // Function for the !lolo command
+  if (command === "lolo") {
+    let msg = "";
+    // Take a random number betwen 0 and the number of punchlines available
+    let rnd = Math.floor(Math.random() * punchlines.lolo.length)
+    msg = punchlines.lolo[rnd];
     message.channel.send(msg);
   }
 });
