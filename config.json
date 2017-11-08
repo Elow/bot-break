@@ -1,6 +1,8 @@
 {
     "token" : "YOUR_TOKEN",
     "prefix" : "!",
+
+    "API_METEO" : "apikey",
     
     "bot_username" : "God",
     "bot_game" : "touching your genitals",
