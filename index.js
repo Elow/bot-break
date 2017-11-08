@@ -11,13 +11,13 @@ moment.locale("fr");
 const client = new Discord.Client();
 
 // Here we load the config.json file that contains our token and our prefix values. 
-const config = require("config/config.json");
+const config = require("./config/config.json");
 
 // Load bibliothèque de punchlines
-const punchlines = require("config/punchlines.json");
+const punchlines = require("./config/punchlines.json");
 
 // Load break config
-const breaks = require("config/breaks.json");
+const breaks = require("./config/breaks.json");
 
 // Client ready
 client.on("ready", () => {
