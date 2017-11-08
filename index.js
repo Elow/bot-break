@@ -11,16 +11,13 @@ moment.locale("fr");
 const client = new Discord.Client();
 
 // Here we load the config.json file that contains our token and our prefix values. 
-const config = require("./config.json");
+const config = require("config/config.json");
 
 // Load bibliothèque de punchlines
-const punchlines = require("./punchlines.json");
+const punchlines = require("config/punchlines.json");
 
-// Load consts
-const break_am = moment(config.break_am, config.break_am_format);
-const break_pm = moment(config.break_pm, config.break_pm_format);
-const work_start = moment(config.work_start, config.work_start_format);
-const work_end = moment(config.work_end, config.work_end_format);
+// Load break config
+const breaks = require("config/breaks.json");
 
 // Client ready
 client.on("ready", () => {
@@ -80,10 +77,10 @@ client.on("message", async message => {
     // Display time before the next break
     let now = moment();
     // Load consts
-    let break_am = moment(config.break_am, config.break_am_format);
-    let break_pm = moment(config.break_pm, config.break_pm_format);
-    let work_start = moment(config.work_start, config.work_start_format);
-    let work_end = moment(config.work_end, config.work_end_format);
+    let break_am = moment(breaks.break_am, breaks.break_am_format);
+    let break_pm = moment(breaks.break_pm, breaks.break_pm_format);
+    let work_start = moment(breaks.work_start, breaks.work_start_format);
+    let work_end = moment(breaks.work_end, breaks.work_end_format);
 
     let msg = "";
 
@@ -123,4 +120,4 @@ client.on("message", async message => {
 
 });
 
-client.login(config.token);
+client.login(config.discord_token);
