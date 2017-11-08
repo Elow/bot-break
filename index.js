@@ -73,13 +73,23 @@ client.on("message", async message => {
 
   if(command === "help") {
     // Display help message
-    message.channel.send(`${config.prefix}help    : t'es con ou quoi ?\n${config.prefix}ping    : test de latence\n${config.prefix}break  : temps avant la prochaine pause`).catch(console.error);;
+    message.channel.send(`${config.prefix}help    : t'es con ou quoi ?\n${config.prefix}ping    : test de latence\n${config.prefix}break  : temps avant la prochaine pause\n${config.prefix}lolo : une punchline de :lolo: random \n${config.prefix}orel : une punchline de :Orelsan: random`).catch(console.error);;
   }
 
   if (command === "break") {
     // Display time before the next break
     let now = moment();
     let msg = "";
+    let weather = "";
+    let url = "http://api.openweathermap.org/data/2.5/weather?q=Nantes,fr&APPID="+config.API_METEO+"&units=metric"
+
+    fetch(url)
+      .then(function(data) {
+        weather = 'Temperature extérieur : '+data.main.temp+'°C, vent '+data.wind.speed+'km/h';
+      })
+      .catch(function(){
+        weather = `Problème d'API météo :( `;
+      })
 
     if (now < work_start) {
         msg = `WTF faut pas se lever aussi tôt ...`;
@@ -93,6 +103,7 @@ client.on("message", async message => {
         msg = `La journée est finie les gars ... Faut partir maintenant ...`;
     }
 
+    msg = msg + '\n' + weather;
     message.channel.send(msg);
   }
 
