@@ -102,7 +102,7 @@ client.on("message", async message => {
     message.channel.send(msg);
   }
 
-  // Function for the !lolo command
+  // Handler for the !lolo command
   if (command === "lolo") {
     let msg = "";
     // Take a random number betwen 0 and the number of punchlines available
@@ -110,6 +110,17 @@ client.on("message", async message => {
     msg = punchlines.lolo[rnd];
     message.channel.send(msg);
   }
+
+  // Handler for the !lolo command
+  if (command === "orel") {
+    let msg = "";
+    // Take a random number betwen 0 and the number of punchlines available
+    let rnd = Math.floor(Math.random() * punchlines.orel.length)
+    msg = punchlines.orel[rnd];
+    message.channel.send(msg);
+  }
+
+
 });
 
 client.login(config.token);
