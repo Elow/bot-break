@@ -1,9 +1,13 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
 
-// Load up the moment.js livrary
+// Load up the moment.js library
 const moment = require('moment-timezone');
 moment.locale("fr");
+
+// Load up the fetch libraries
+const fetchXml = require('node-fetch');
+const fetchJson = require('node-fetch-json');
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
@@ -70,7 +74,30 @@ client.on("message", async message => {
 
   if(command === "help") {
     // Display help message
-    message.channel.send(`${config.prefix}help    : t'es con ou quoi ?\n${config.prefix}ping    : test de latence\n${config.prefix}break  : temps avant la prochaine pause + meteo locale\n${config.prefix}lolo : punchline random de lolo\n${config.prefix}orel : punchline random d'orelsan`).catch(console.error);;
+    message.channel.send(`${config.prefix}help    : t'es con ou quoi ?\n${config.prefix}ping    : test de latence\n${config.prefix}break  : temps avant la prochaine pause\n${config.prefix}lolo : punchline random de ${client.emojis.find("name", "lolo")}\n${config.prefix}orel : punchline random d'orelsan\n${config.prefix}weather {NomVille},{CodePays} : affiche le temps pour la ville voulue (par défaut Nantes, {NomVille} et {CodePays} optionnels)`).catch(console.error);;
+  }
+
+  if (command === "weather") {
+    if (args[1] !== undefined) {
+      message.channel.send(`Format attendu : !weather NomVille,codepays (!weather LosAngeles,us)`);
+      return;
+    }
+    let city = "Nantes";
+    if (args[0] !== undefined) {
+      city = args[0];
+    }
+
+    let weather = "";
+    let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${config.API_METEO}&units=metric`;
+ 
+    fetchJson(url)
+      .then(function(data) {
+        message.channel.send(`A ${city}, la temperature extérieur est de ${data.main.temp}°C, avec un vent de ${data.wind.speed}km/h`);
+      })
+      .catch(function() {
+        message.channel.send(`Erreur appel API pour la ville ${city}`);
+        console.log(`Problème d'API météo :(`);
+      });
   }
 
   if (command === "break") {
@@ -84,17 +111,6 @@ client.on("message", async message => {
 
     let msg = "";
 
-    let weather = ""; 
-    let url = "http://api.openweathermap.org/data/2.5/weather?q=Nantes,fr&APPID="+config.API_METEO+"&units=metric" 
- 
-    fetch(url) 
-      .then(function(data) { 
-        weather = 'Temperature extérieur : '+data.main.temp+'°C, vent '+data.wind.speed+'km/h'; 
-      }) 
-      .catch(function(){ 
-        weather = `Problème d'API météo :( `; 
-      }) 
-
     if (now < work_start) {
         msg = `WTF faut pas se lever aussi tôt ...`;
     } else if (now < break_am) {
@@ -106,8 +122,6 @@ client.on("message", async message => {
     } else {
         msg = `La journée est finie les gars ... Faut partir maintenant ...`;
     }
-
-    msg = msg + '\n' + weather;
 
     message.channel.send(msg);
   }
