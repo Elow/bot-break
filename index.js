@@ -88,7 +88,7 @@ client.on("message", async message => {
     }
 
     let weather = "";
-    let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${config.API_METEO}&units=metric`;
+    let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${process.env.WEATHER_TOKEN}&units=metric`;
  
     fetchJson(url)
       .then(function(data) {
@@ -147,4 +147,4 @@ client.on("message", async message => {
 
 });
 
-client.login(config.discord_token);
+client.login(process.env.BOT_TOKEN);
