@@ -2,5 +2,7 @@
     "discord_token" : "YOUR_DISCORD_TOKEN",
     "prefix" : "!",    
     "bot_username" : "God",
-    "bot_game" : "touching your genitals"
+    "bot_game" : "touching your genitals",
+
+    "API_METEO":"API KEY"
 }
