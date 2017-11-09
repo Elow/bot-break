@@ -2,10 +2,10 @@
   "name": "discordbot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "bot.js",
   "scripts": {
     "test": "./node_modules/jshint/bin/jshint tests/hello.js",
-    "start": "node index.js"
+    "start": "node bot.js"
   },
   "author": "",
   "license": "ISC",
