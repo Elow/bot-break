@@ -1,3 +1,10 @@
 language: node_js
 node_js:
-  - "node"
+- node
+deploy:
+  provider: heroku
+  api_key:
+    secure: HoKjOHZtnGF300/0zKLaeVEib4Se0AzLlCt3P1IhLBGeRnyjfCkafVC6ppT1SI/pbP8pWt9umvD3M1/V+yF2GKE1REoZ36wkMIkIPXI7g6pVkSseZou7Dg49AqwWBgnUsWBEAUkPMlRdOp1oJLM5jnqTN4EHGzBmVaxzSALyXPIZN1K8WYPBfPIZSRDBUaRmSUDYSoYxSdybvEbxLlQqKdPtg54/uJS/ZlguI0wtn5kweczPKuskQpxMg8S2Pbu+zI1QbQzrbEUOSPGTQQ7fhmtHRq2uGhk0FDJZPcgid141XPB2vF47+rxNovOyJwVYE/HJ2xuxmqyYtlWOI+BY4KEAAMS2em7Ot7OpXwImIjE1QRiA1bKYEUI98MvnknDVVcLCNpWnRXzAq5RqRfmBd3SUhgMzyFns5wJZYQcPFqldZ2cTPm+Bu/azvZN2xZZjaApV3H9501IVtm95Y28Bb+jvumdfYe+kVPZEvuF3YQRWyENhZEaslPXMtUgA9SADlyPXqtPc5wrhU6z2xpAPSx9m4IGgg3XwCiUQPoyq2wam7WpGvvOBB/cJXzeiiFJ6tQ3xXXGGMb9VpbT7bS4u+QoVKNtqXx+ZyXahzdC5O/leyGqAdQS1WbuMcfOOGoHIqvHtwXACvT6qXote4YPMsYFZVF/+WPdd1LXDxgcj7hs=
+  app: bot-break
+  on:
+    repo: Elow/bot-break
