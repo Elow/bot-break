@@ -62,8 +62,8 @@ client.on("message", async message => {
   if (message.tts) {
     console.log(`Deleted a tts message`);
     message.channel.send(`${message.author.username} est un GROS CONNARD qui utilise le TTS`)
-      .then(msg => { message.delete(); msg.delete(config.time_before_delete); })
-      .catch(console.error);
+    .then(msg => { message.delete(); msg.delete(config.time_before_delete); })
+    .catch(console.error);
   }
   
   // Ignore other bots
@@ -82,24 +82,23 @@ client.on("message", async message => {
   // Log command
   console.log(`----- commande received from ${message.author.id} - ${message.author.username}#${message.author.discriminator} : ${command}`);
   
-  if(command === "ping") {
+  if (command === "ping") {
     // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
     // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
     const m = await message.channel.send("Ping?");
     m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`).catch(console.error);
   }
-
-  if(command === "help") {
+  else if (command === "help") {
     // Display help message
     message.channel.send(`${config.prefix}help    : t'es con ou quoi ?\n${config.prefix}ping    : test de latence\n${config.prefix}lolo : punchline random de ${client.emojis.find("name", "lolo")}\n${config.prefix}orel : punchline random d'orelsan\n${config.prefix}weather {NomVille},{CodePays} : affiche le temps pour la ville voulue (par défaut Nantes, {NomVille} et {CodePays} optionnels)\n${config.prefix}sub_to_break_announce Inscrire le chan aux alertes des pauses`).catch(console.error);;
     message.delete();
   }
-
-  if (command === "weather") {
+  else if (command === "weather") {
+    // Display weather in cities
     if (args[1] !== undefined) {
       message.channel.send(`WRONG FORMAT ASSHOLE : !weather NomVille,codepays (!weather LosAngeles,us)`)
-        .then(msg => { message.delete(); msg.delete(config.time_before_delete); })
-        .catch(console.error);
+      .then(msg => { message.delete(); msg.delete(config.time_before_delete); })
+      .catch(console.error);
       return;
     }
     let city = "Nantes";
@@ -109,47 +108,65 @@ client.on("message", async message => {
 
     let weather = "";
     let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${process.env.WEATHER_TOKEN}&units=metric`;
- 
-    fetchJson(url)
-      .then(function(data) {
-        message.channel.send(`A ${city}, la temperature extérieur est de ${data.main.temp}°C, avec un vent de ${data.wind.speed}km/h`);
-      })
-      .catch(function() {
-        message.channel.send(`Erreur appel API pour la ville ${city}`);
-        console.log(`Problème d'API météo :(`);
-      });
-  }
 
-  // Handler for the !lolo command
-  if (command === "lolo") {
+    fetchJson(url)
+    .then(function(data) {
+      message.channel.send(`A ${city}, la temperature extérieur est de ${data.main.temp}°C, avec un vent de ${data.wind.speed}km/h`);
+    })
+    .catch(function() {
+      message.channel.send(`Erreur appel API pour la ville ${city}`);
+      console.log(`Problème d'API météo :(`);
+    });
+  }
+  else if (command === "lolo") {
+    // Handler for the !lolo command
     let msg = "";
     // Take a random number betwen 0 and the number of punchlines available
     let rnd = Math.floor(Math.random() * punchlines.lolo.length)
     msg = punchlines.lolo[rnd];
     message.channel.send(msg);
   }
-
-  // Handler for the !lolo command
-  if (command === "orel") {
+  else if (command === "break") {
+    let _msg = "";
+    let _min = 3600;
+    _.each(breaks, function(_break) {
+      let _diff = moment(_break.time, _break.format).diff(moment(), 'minutes');
+      console.log(_diff);
+      if (_diff > 0 && _diff < _min) {
+        _msg = `${_diff} minutes avant ${_break.name}`;
+      }
+    });
+    if (_msg == "") {
+      _msg = "No moar breaks ;(";
+    } else {
+      message.channel.send(_msg).catch(console.error);
+    }
+  }
+  else if (command === "orel") {
+    // Handler for the !lolo command
     let msg = "";
     // Take a random number betwen 0 and the number of punchlines available
     let rnd = Math.floor(Math.random() * punchlines.orel.length)
     msg = punchlines.orel[rnd];
     message.channel.send(msg);
   }
-
-  if (command === "sub_to_break_announce") {
+  else if (command === "sub_to_break_announce") {
     let _chan_id = message.channel.id;
     if (!_.contains(chans_announce, _chan_id)) {
       chans_announce.push(_chan_id);
       message.channel.send(`Ce chan va maintenant recevoir automatiquement les alertes aux pauses`)
-        .then(msg => { message.delete(); msg.delete(config.time_before_delete) })
-        .catch(console.error);
+      .then(msg => { message.delete(); msg.delete(config.time_before_delete) })
+      .catch(console.error);
     } else {
       message.channel.send(`Ce chan est déjà abonné aux alertes`)
-        .then(msg => { message.delete(); msg.delete(config.time_before_delete) })
-        .catch(console.error);
+      .then(msg => { message.delete(); msg.delete(config.time_before_delete) })
+      .catch(console.error);
     }
+  }
+  else {
+    message.channel.send(`Elle existe pas ta commande poto ...`)
+    .then(msg => { message.delete(); msg.delete(config.time_before_delete) })
+    .catch(console.error);
   }
 });
 
