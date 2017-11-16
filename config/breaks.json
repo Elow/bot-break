@@ -1,10 +1,26 @@
-{
-    "break_am" : "1030",
-    "break_am_format" : "hhmm",
-    "break_pm" : "1530",
-    "break_pm_format" : "hhmm",
-    "work_start" : "0900",
-    "work_start_format" : "hhmm",
-    "work_end" : "1800",
-    "work_end_format" : "hhmm"
-}
+[
+	{
+		"time": "1030",
+		"format": "hhmm",
+		"name": "la pause du matin",
+		"schedule": "0 25 10 * * *"
+	},
+	{
+		"time": "1530",
+		"format": "hhmm",
+		"name": "la pause de l'aprem",
+		"schedule": "0 25 15 * * *"
+	},
+	{
+		"time": "0900",
+		"format": "hhmm",
+		"name": "le début du taf",
+		"schedule": "0 55 08 * * *"
+	},
+	{
+		"time": "1800",
+		"format": "hhmm",
+		"name": "la fin du taf",
+		"schedule": "0 55 17 * * *"
+	}
+]

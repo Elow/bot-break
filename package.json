@@ -19,7 +19,9 @@
     "moment-timezone": "^0.5.13",
     "node-fetch": "^1.7.3",
     "node-fetch-json": "0.0.3",
+    "node-schedule": "^1.2.5",
     "nodemon": "^1.12.1",
+    "underscore-node": "^0.1.2",
     "uws": "^8.14.1",
     "zlib-sync": "^0.1.3"
   },

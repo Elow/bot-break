@@ -5,6 +5,12 @@ const Discord = require("discord.js");
 const moment = require('moment-timezone');
 moment.locale("fr");
 
+// Load up the schedule library
+const schedule = require('node-schedule');
+
+// Load up the underscore-node library
+const _ = require('underscore-node');
+
 // Load up the fetch libraries
 const fetchXml = require('node-fetch');
 const fetchJson = require('node-fetch-json');
@@ -22,6 +28,9 @@ const punchlines = require("./config/punchlines.json");
 
 // Load break config
 const breaks = require("./config/breaks.json");
+
+// Global var
+let chans_announce = [];
 
 // Client ready
 client.on("ready", () => {
@@ -48,6 +57,14 @@ client.on("guildDelete", guild => {
 
 client.on("message", async message => {
   // This event will run on every single message received, from any channel or DM.
+
+  // Check for tts
+  if (message.tts) {
+    console.log(`Deleted a tts message`);
+    message.channel.send(`${message.author.username} est un GROS CONNARD qui utilise le TTS`)
+      .then(msg => { message.delete(); msg.delete(config.time_before_delete); })
+      .catch(console.error);
+  }
   
   // Ignore other bots
   if(message.author.bot) return;
@@ -63,7 +80,7 @@ client.on("message", async message => {
   const command = args.shift().toLowerCase();
 
   // Log command
-  console.log(`----- commande received from ${message.author.id}#${message.author.discriminator} - ${message.author.username} : ${command}`);
+  console.log(`----- commande received from ${message.author.id} - ${message.author.username}#${message.author.discriminator} : ${command}`);
   
   if(command === "ping") {
     // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
@@ -74,12 +91,15 @@ client.on("message", async message => {
 
   if(command === "help") {
     // Display help message
-    message.channel.send(`${config.prefix}help    : t'es con ou quoi ?\n${config.prefix}ping    : test de latence\n${config.prefix}break  : temps avant la prochaine pause\n${config.prefix}lolo : punchline random de ${client.emojis.find("name", "lolo")}\n${config.prefix}orel : punchline random d'orelsan\n${config.prefix}weather {NomVille},{CodePays} : affiche le temps pour la ville voulue (par défaut Nantes, {NomVille} et {CodePays} optionnels)`).catch(console.error);;
+    message.channel.send(`${config.prefix}help    : t'es con ou quoi ?\n${config.prefix}ping    : test de latence\n${config.prefix}lolo : punchline random de ${client.emojis.find("name", "lolo")}\n${config.prefix}orel : punchline random d'orelsan\n${config.prefix}weather {NomVille},{CodePays} : affiche le temps pour la ville voulue (par défaut Nantes, {NomVille} et {CodePays} optionnels)\n${config.prefix}sub_to_break_announce Inscrire le chan aux alertes des pauses`).catch(console.error);;
+    message.delete();
   }
 
   if (command === "weather") {
     if (args[1] !== undefined) {
-      message.channel.send(`Format attendu : !weather NomVille,codepays (!weather LosAngeles,us)`);
+      message.channel.send(`WRONG FORMAT ASSHOLE : !weather NomVille,codepays (!weather LosAngeles,us)`)
+        .then(msg => { message.delete(); msg.delete(config.time_before_delete); })
+        .catch(console.error);
       return;
     }
     let city = "Nantes";
@@ -100,32 +120,6 @@ client.on("message", async message => {
       });
   }
 
-  if (command === "break") {
-    // Display time before the next break
-    let now = moment();
-    // Load consts
-    let break_am = moment(breaks.break_am, breaks.break_am_format);
-    let break_pm = moment(breaks.break_pm, breaks.break_pm_format);
-    let work_start = moment(breaks.work_start, breaks.work_start_format);
-    let work_end = moment(breaks.work_end, breaks.work_end_format);
-
-    let msg = "";
-
-    if (now < work_start) {
-        msg = `WTF faut pas se lever aussi tôt ...`;
-    } else if (now < break_am) {
-        msg = break_am.fromNow();
-    } else if (now < break_pm) {
-        msg = break_pm.fromNow();
-    } else if (now < work_end) {
-        msg = `Les pauses c'est fini ...`;
-    } else {
-        msg = `La journée est finie les gars ... Faut partir maintenant ...`;
-    }
-
-    message.channel.send(msg);
-  }
-
   // Handler for the !lolo command
   if (command === "lolo") {
     let msg = "";
@@ -144,7 +138,29 @@ client.on("message", async message => {
     message.channel.send(msg);
   }
 
-
+  if (command === "sub_to_break_announce") {
+    let _chan_id = message.channel.id;
+    if (!_.contains(chans_announce, _chan_id)) {
+      chans_announce.push(_chan_id);
+      message.channel.send(`Ce chan va maintenant recevoir automatiquement les alertes aux pauses`)
+        .then(msg => { message.delete(); msg.delete(config.time_before_delete) })
+        .catch(console.error);
+    } else {
+      message.channel.send(`Ce chan est déjà abonné aux alertes`)
+        .then(msg => { message.delete(); msg.delete(config.time_before_delete) })
+        .catch(console.error);
+    }
+  }
 });
+
+// Schedules
+for (var i = breaks.length - 1; i >= 0; i--) {
+  let _break = breaks[i];
+  schedule.scheduleJob(`${_break.schedule}`, function() {
+    _.each(chans_announce, function(el) {
+      client.channels.find("id", el).send(`Bientôt ${_break.name} dans 5 min`).catch(console.error);
+    });
+  });
+}
 
 client.login(process.env.BOT_TOKEN);
