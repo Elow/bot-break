@@ -262,20 +262,23 @@ client.on("message", async message => {
         }
         case 'destin': {
             if (args[0] === undefined) {
-                sendMessage(`Un paramètre est attendu, merci de consulter ${config.prefix}destin help ou -h pour l'aide.`, message, true);
+                sendMessage(`Un paramètre est attendu, merci de consulter ${config.prefix}destin help ou -h pour l'aide.`, message);
             } else {
                 let mode = args.shift().toLowerCase();
                 switch (mode) {
                     case 'play': {
                         sendMessage(`La commande ${mode} est pas encore dev bande de pute`, message);
+                        break
                     }
                     case '-n':
                     case 'add_name': {
                         sendMessage(`La commande ${mode} est pas encore dev bande de pute`, message);
+                        break;
                     }
                     case '-a':
                     case 'add_action': {
                         sendMessage(`La commande ${mode} est pas encore dev bande de pute`, message);
+                        break;
                     }
                     case '-h':
                     case 'help': {
