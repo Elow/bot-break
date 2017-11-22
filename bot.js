@@ -108,7 +108,7 @@ client.on("message", async message => {
     }
 
     // Ignore other bots
-    if(message.author.bot) return;
+    if(message.author.bot && message.author.id <> "373101871285665803") return;
 
     // Ignore non-command message
     if(message.content.indexOf(config.prefix) !== 0) return;
@@ -291,6 +291,16 @@ for (var i = breaks.length - 1; i >= 0; i--) {
         .catch(console.error);
     });
 }
+// Keepalive
+schedule.scheduleJob("0 59 * * * *", function() {
+    Subs.findAll()
+    .then(subs => {
+        _.each(subs, function(el) {
+            client.channels.find("id", el.chan_id).send(`ping`).catch(console.error);
+        });
+    })
+    .catch(console.error);
+});
 
 // Functions
 var unSub = function (_chan_id) {
