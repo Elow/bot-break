@@ -107,7 +107,7 @@ client.on("message", async message => {
         sendMessage(`${message.author.username} est un GROS CONNARD qui utilise le TTS`, message, true);
     }
 
-    // Ignore other bots
+    // Ignore other bots, allow himself
     if(message.author.bot && message.author.id != "373101871285665803") return;
 
     // Ignore non-command message
@@ -119,6 +119,9 @@ client.on("message", async message => {
     // args = ["Is", "this", "the", "real", "life?"]
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
+    
+    // Ignore commands send by himself
+    if (command != "ping" && message.author.id == "373101871285665803") return;
 
     // Log command
     console.log(`----- command received from ${message.author.id} - ${message.author.username}#${message.author.discriminator}`, command);
