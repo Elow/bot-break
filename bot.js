@@ -108,7 +108,7 @@ client.on("message", async message => {
     }
 
     // Ignore other bots
-    if(message.author.bot && message.author.id <> "373101871285665803") return;
+    if(message.author.bot && message.author.id != "373101871285665803") return;
 
     // Ignore non-command message
     if(message.content.indexOf(config.prefix) !== 0) return;
