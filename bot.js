@@ -136,7 +136,7 @@ client.on("message", async message => {
         }
         case 'help': {
             // Display help message
-            sendMessage(`${config.prefix}help\t: t'es con ou quoi ?\n${config.prefix}break\t: temps avant la prochaine pause\n${config.prefix}punchlines\t: menu des punchlines\n${config.prefix}weather\t: affiche le temps pour la ville voulue (par défaut Nantes, paramètre optionel : NomVille,CodePays)\n${config.prefix}sub_to_break_announce\t: Inscrire le chan aux alertes des pauses\n${config.prefix}unsub_to_break_announce\t: Désinscrire le chan aux alertes des pauses\n${config.prefix}sub_to_break_announce_status\t: Connaitre l'état de l'inscription aux alertes\n${config.prefix}ping\t: test de latence`, message)
+            sendMessage(`${config.prefix}help\t: t'es con ou quoi ?\n${config.prefix}break\t: temps avant la prochaine pause\n${config.prefix}punchlines\t: menu des punchlines\n${config.prefix}weather\t: affiche le temps pour la ville voulue (par défaut Nantes, paramètre optionel : NomVille,CodePays)\n${config.prefix}sub_to_break_announce\t: Inscrire le chan aux alertes des pauses\n${config.prefix}unsub_to_break_announce\t: Désinscrire le chan aux alertes des pauses\n${config.prefix}sub_to_break_announce_status\t: Connaitre l'état de l'inscription aux alertes\n${config.prefix}ping\t: test de latence\n${config.prefix}destin : jeu du destin, essayez ${config.prefix}destin -h pour de l'aide`, message)
             break;
         }
         case 'weather': {
