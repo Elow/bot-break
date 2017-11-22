@@ -260,6 +260,31 @@ client.on("message", async message => {
             }
             break;
         }
+        case 'destin': {
+            if (args[0] === undefined) {
+                sendMessage(`Un paramètre est attendu, merci de consulter ${config.prefix}destin help ou -h pour l'aide.`, message, true);
+            } else {
+                let mode = args.shift().toLowerCase();
+                switch (mode) {
+                    case 'play': {
+                        sendMessage(`La commande ${mode} est pas encore dev bande de pute`, message);
+                    }
+                    case '-n':
+                    case 'add_name': {
+                        sendMessage(`La commande ${mode} est pas encore dev bande de pute`, message);
+                    }
+                    case '-a':
+                    case 'add_action': {
+                        sendMessage(`La commande ${mode} est pas encore dev bande de pute`, message);
+                    }
+                    case '-h':
+                    case 'help': {
+                        sendMessage(`Liste des commandes du Destin : \nplay : lance une phrase random \nadd_name (ou -n) : ajoute un nom\nadd_action (ou -a) : ajoute une action\nhelp (ou -h) : tu serais pas un petit peu con garçon ?`, message);
+                        break;
+                    }
+                }
+            }
+        }
         default: {
             // Check if it's a punchline command
             Punchlines.findAll({ where: {artist: command} })
