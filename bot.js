@@ -53,6 +53,13 @@ var Punchlines = sequelize.define('Punchlines', {
 var Subs = sequelize.define('Subs', {
     chan_id: Sequelize.STRING
 });
+var DestinNames = sequelize.define('DestinNames', {
+    name: Sequelize.STRING
+});
+var DestinActions = sequelize.define('DestinActions', {
+    action: Sequelize.STRING
+});
+
 sequelize.sync({force: config.clear_db}).then(function(err) {
     console.log('It worked!');
     // Populate data
@@ -267,23 +274,26 @@ client.on("message", async message => {
                 let mode = args.shift().toLowerCase();
                 switch (mode) {
                     case 'play': {
-                        sendMessage(`La commande ${mode} est pas encore dev bande de pute`, message);
-                        break
+                        sendMessage(`La commande ${mode} est pas encore dev bande de putes`, message);
+                        break;
                     }
                     case '-n':
                     case 'add_name': {
-                        sendMessage(`La commande ${mode} est pas encore dev bande de pute`, message);
+                        sendMessage(`La commande ${mode} est pas encore dev bande de putes`, message);
                         break;
                     }
                     case '-a':
                     case 'add_action': {
-                        sendMessage(`La commande ${mode} est pas encore dev bande de pute`, message);
+                        sendMessage(`La commande ${mode} est pas encore dev bande de putes`, message);
                         break;
                     }
                     case '-h':
                     case 'help': {
                         sendMessage(`Liste des commandes du Destin : \nplay : lance une phrase random \nadd_name (ou -n) : ajoute un nom\nadd_action (ou -a) : ajoute une action\nhelp (ou -h) : tu serais pas un petit peu con garçon ?`, message);
                         break;
+                    }
+                    default: {
+                        sendMessage(`Cette commande n'existe pas sur !destin, consulter !destin -h pour de l'aide`, message);
                     }
                 }
             }
