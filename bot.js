@@ -274,8 +274,48 @@ client.on("message", async message => {
                 let mode = args.shift().toLowerCase();
                 switch (mode) {
                     case 'play': {
-                        let destinMsg = generateDestin();
-                        sendMessage(destinMsg, message);
+                        //let destinMsg = generateDestin();
+                        //sendMessage(destinMsg, message);
+                        var pickedNames = [];
+                        var pickedAction = "";
+                    
+                    
+                        // Récupération de 2 noms
+                        DestinNames.findAll()
+                        .then(names => {
+                            if (names.length > 0) {
+                                console.log('Nom destin');
+                                // Take a random number betwen 0 and the number of name available
+                                let _rnd = Math.floor(Math.random() * names.length)
+                                pickedNames[0] = names[_rnd].name;
+                                // Take a second random number betwen 0 and the number of name available
+                                let _rnd2 = Math.floor(Math.random() * names.length)
+                                pickedNames[1] = names[_rnd2].name;
+                            } else {
+                                sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
+                            }
+                        })
+                        .catch(console.error);
+                    
+                        DestinActions.findAll()
+                        .then(actions => {
+                            if (actions.length > 0) {
+                                console.log('Action destin');
+                                // Take a random number betwen 0 and the number of actions available
+                                let _rnd = Math.floor(Math.random() * actions.length)
+                                pickedAction= actions[_rnd].action;
+                            } else {
+                                sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
+                            }
+                        })
+                        .catch(console.error);
+                    
+                        // Generate complete sentence name + action + name2
+                        if (pickedNames.length !== 0 && pickedAction !== ""){
+                            sendMessage(`${pickedNames[0]} ${pickedAction} ${pickedNames[1]}`);
+                        } else {
+                            sendMessage(`Erreur dans la matrice du Destin ...`, message,true);
+                        }
                         break;
                     }
                     case '-n':
