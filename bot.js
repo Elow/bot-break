@@ -293,6 +293,7 @@ client.on("message", async message => {
                                 sendMessage(`pickedName 2 = ${pickedNames.toString()} from : ${JSON.stringify(names)}`,message);
                             } else {
                                 sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
+                                break;
                             }
                         })
                         .catch(console.error);
@@ -307,16 +308,13 @@ client.on("message", async message => {
                                 sendMessage(`pickedAction  = ${pickedAction.toString()} from : ${JSON.stringify(actions)}`,message);
                             } else {
                                 sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
+                                break;
                             }
                         })
                         .catch(console.error);
                     
                         // Generate complete sentence name + action + name2
-                        if (pickedNames.length !== 0 && pickedAction !== ""){
-                            sendMessage(`${pickedNames[0]} ${pickedAction} ${pickedNames[1]}`);
-                        } else {
-                            sendMessage(`Erreur dans la matrice du Destin ...`, message,true);
-                        }
+                        sendMessage(`Destin : ${pickedNames[0]} ${pickedAction} ${pickedNames[1]}`);                        
                         break;
                     }
                     case '-n':
