@@ -314,7 +314,7 @@ client.on("message", async message => {
                         if (pickedNames.length !== 0 && pickedAction !== ""){
                             sendMessage(`${pickedNames[0]} ${pickedAction} ${pickedNames[1]}`);
                         } else {
-                            sendMessage(`Erreur dans la matrice du Destin ...`, message,true);
+                            sendMessage(`Erreur dans la matrice du Destin ... : ${pickedNames.length} : ${pickedNames.toString} Actions : ${pickedAction}`, message,true);
                         }
                         break;
                     }
