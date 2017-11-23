@@ -274,17 +274,32 @@ client.on("message", async message => {
                 let mode = args.shift().toLowerCase();
                 switch (mode) {
                     case 'play': {
-                        sendMessage(`La commande ${mode} est pas encore dev bande de putes`, message);
+                        let destinMsg = generateDestin();
+                        sendMessage(destinMsg, message);
                         break;
                     }
                     case '-n':
                     case 'add_name': {
-                        sendMessage(`La commande ${mode} est pas encore dev bande de putes`, message);
+                        if (args[0] === undefined){
+                            sendMessage(`Faut ajouter un nom espèce de gogol !`, message, true);
+                        } else {
+                            let nameToAdd = args.shift();
+                            DestinNames.create({name: nameToAdd})
+                            .catch(console.error);
+                            sendMessage(`Le nom  "${nameToAdd}" a bien été ajouté ! `, message, true);
+                        }                       
                         break;
                     }
                     case '-a':
                     case 'add_action': {
-                        sendMessage(`La commande ${mode} est pas encore dev bande de putes`, message);
+                        if (args[0] === undefined){
+                            sendMessage(`Faut ajouter une action espèce de gogol !`, message, true);
+                        } else {
+                            let actionToAdd = args.join(' ');
+                            DestinActions.create({action: actionToAdd})
+                            .catch(console.error);
+                            sendMessage(`L'action  "${actionToAdd}" a bien été ajouté ! `, message, true);
+                        }                       
                         break;
                     }
                     case '-h':
@@ -364,6 +379,52 @@ var sendMessage = function(message, obj_msg, doDelete = false) {
         .then(msg => { obj_msg.delete(); msg.delete(config.time_before_delete) })
         .catch(console.error);
     }
+}
+
+// Destin functions
+var generateDestin = function(){
+    var pickedNames = [];
+    var pickedAction = "";
+
+
+    // Récupération de 2 noms
+    DestinNames.findAll()
+    .then(names => {
+        if (names.length > 0) {
+            console.log('Nom destin');
+            // Take a random number betwen 0 and the number of name available
+            let _rnd = Math.floor(Math.random() * names.length)
+            pickedNames[0] = names[_rnd].name;
+            // Take a second random number betwen 0 and the number of name available
+            let _rnd2 = Math.floor(Math.random() * names.length)
+            pickedNames[1] = names[_rnd2].name;
+        } else {
+            sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
+        }
+    })
+    .catch(console.error);
+
+    DestinActions.findAll()
+    .then(actions => {
+        if (actions.length > 0) {
+            console.log('Action destin');
+            // Take a random number betwen 0 and the number of actions available
+            let _rnd = Math.floor(Math.random() * actions.length)
+            pickedAction= actions[_rnd].action;
+        } else {
+            sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
+        }
+    })
+    .catch(console.error);
+
+    // Generate complete sentence name + action + name2
+    if (pickedNames.length !== 0 && pickedAction !== ""){
+        return (`/!\ `+pickedNames[0]+` `+pickedAction+` `+pickedNames[1]);
+    } else {
+        sendMessage(`Erreur dans la matrice du Destin ...`, message,true);
+    }
+    
+
 }
 
 client.login(process.env.BOT_TOKEN);
