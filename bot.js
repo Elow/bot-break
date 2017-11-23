@@ -286,11 +286,9 @@ client.on("message", async message => {
                                 // Take a random number betwen 0 and the number of name available
                                 let _rnd = Math.floor(Math.random() * names.length)
                                 pickedNames.push(names[_rnd].name);
-                                sendMessage(`pickedName 1 = ${pickedNames.toString()} from : ${JSON.stringify(names)}`,message);
                                 // Take a second random number betwen 0 and the number of name available
                                 let _rnd2 = Math.floor(Math.random() * names.length)
                                 pickedNames.push(names[_rnd2].name);
-                                sendMessage(`pickedName 2 = ${pickedNames.toString()} from : ${JSON.stringify(names)}`,message);
                             } else {
                                 sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
                                 break;
@@ -305,7 +303,6 @@ client.on("message", async message => {
                                 // Take a random number betwen 0 and the number of actions available
                                 let _rnd = Math.floor(Math.random() * actions.length)
                                 pickedAction= actions[_rnd].action;
-                                sendMessage(`pickedAction  = ${pickedAction.toString()} from : ${JSON.stringify(actions)}`,message);
                             } else {
                                 sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
                                 break;
