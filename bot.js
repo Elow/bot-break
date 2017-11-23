@@ -312,6 +312,7 @@ client.on("message", async message => {
                     }
                 }
             }
+            break;
         }
         default: {
             // Check if it's a punchline command
