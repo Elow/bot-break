@@ -274,8 +274,6 @@ client.on("message", async message => {
                 let mode = args.shift().toLowerCase();
                 switch (mode) {
                     case 'play': {
-                        //let destinMsg = generateDestin();
-                        //sendMessage(destinMsg, message);
                         var pickedNames = [];
                         var pickedAction = "";
                     
@@ -287,10 +285,12 @@ client.on("message", async message => {
                                 console.log('Nom destin');
                                 // Take a random number betwen 0 and the number of name available
                                 let _rnd = Math.floor(Math.random() * names.length)
-                                pickedNames[0] = names[_rnd].name;
+                                pickedNames.push(names[_rnd].name);
+                                sendMessage(`pickedName 1 = ${pickedNames.toString()} from : ${JSON.stringify(names)}`,message);
                                 // Take a second random number betwen 0 and the number of name available
                                 let _rnd2 = Math.floor(Math.random() * names.length)
-                                pickedNames[1] = names[_rnd2].name;
+                                pickedNames.push(names[_rnd2].name);
+                                sendMessage(`pickedName 2 = ${pickedNames.toString()} from : ${JSON.stringify(names)}`,message);
                             } else {
                                 sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
                             }
@@ -304,6 +304,7 @@ client.on("message", async message => {
                                 // Take a random number betwen 0 and the number of actions available
                                 let _rnd = Math.floor(Math.random() * actions.length)
                                 pickedAction= actions[_rnd].action;
+                                sendMessage(`pickedAction  = ${pickedAction.toString()} from : ${JSON.stringify(actions)}`,message);
                             } else {
                                 sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
                             }
@@ -314,7 +315,7 @@ client.on("message", async message => {
                         if (pickedNames.length !== 0 && pickedAction !== ""){
                             sendMessage(`${pickedNames[0]} ${pickedAction} ${pickedNames[1]}`);
                         } else {
-                            sendMessage(`Erreur dans la matrice du Destin ... : ${pickedNames.length} : ${pickedNames.toString} Actions : ${pickedAction}`, message,true);
+                            sendMessage(`Erreur dans la matrice du Destin ...`, message,true);
                         }
                         break;
                     }
