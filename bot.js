@@ -267,6 +267,7 @@ client.on("message", async message => {
             }
             break;
         }
+        case 'd':
         case 'destin': {
             // Scope de mes couilles 
             var pickedName1 = "";
@@ -341,15 +342,15 @@ client.on("message", async message => {
                     }
                     case '-h':
                     case 'help': {
-                        sendMessage(`Liste des commandes du Destin : \nplay : lance une phrase random \nadd_name (ou -n) : ajoute un nom\nadd_action (ou -a) : ajoute une action\nhelp (ou -h) : tu serais pas un petit peu con garçon ?`, message);
+                        sendMessage(`Liste des commandes du Destin : \nplay : lance une phrase random \nadd_name (ou -n) : ajoute un nom\nadd_action (ou -a) : ajoute une action\nhelp (ou -h) : tu serais pas un petit peu con garçon ?\n-la : liste des actions \n-ln : liste des noms`, message);
                         break;
                     }
                     case '-ln':
                     case 'list_name': {
                         DestinNames.findAll()
                         .then(names => {
-                            let _names = _.map(names, function(item) { return `${item.name}` });
-                            sendMessage(`Liste des noms du Destin disponibles : ${_names.join(', \n ')}`, message);
+                            let _names = _.map(names, function(item) { return `${item.id} : ${item.name}` });
+                            sendMessage(`Liste des noms du Destin disponibles :\n ${_names.join(', \n ')}`, message);
                         })
                         .catch(console.error);
                         break;
@@ -358,8 +359,8 @@ client.on("message", async message => {
                     case 'list_action': {
                         DestinActions.findAll()
                         .then(actions => {
-                            let _actions = _.map(actions, function(item) { return `${item.action}` });
-                            sendMessage(`Liste des actions du Destin disponibles : ${_actions.join(', \n ')}`, message);
+                            let _actions = _.map(actions, function(item) { return `${item.id} : ${item.action}` });
+                            sendMessage(`Liste des actions du Destin disponibles :\n ${_actions.join(', \n ')}`, message);
                         })
                         .catch(console.error);
                         break;
