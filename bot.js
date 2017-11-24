@@ -283,43 +283,36 @@ client.on("message", async message => {
                         var pickedName2 = "";
                         var pickedAction = "";
                     
-                        let promise = new Promise(function (resolve){
-                            // Récupération de 2 noms
-                            DestinNames.findAll()
-                            .then(names => {
-                                if (names.length > 0) {
-                                    console.log('Nom destin');
-                                    // Take a random number betwen 0 and the number of name available
-                                    let _rnd = Math.floor(Math.random() * names.length)
-                                    pickedName1 = names[_rnd].name;
-                                    // Take a second random number betwen 0 and the number of name available
-                                    let _rnd2 = Math.floor(Math.random() * names.length)
-                                    pickedName2 = names[_rnd2].name;
-                                } else {
-                                    sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
-                                }
-                            })
-                            .catch(console.error);
-                        
-                            DestinActions.findAll()
-                            .then(actions => {
-                                if (actions.length > 0) {
-                                    console.log('Action destin');
-                                    // Take a random number betwen 0 and the number of actions available
-                                    let _rnd = Math.floor(Math.random() * actions.length)
-                                    pickedAction= actions[_rnd].action;
-                                } else {
-                                    sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
-                                }
-                            })
-                            .catch(console.error);
-
-                            resolve([pickedName1, pickedName2, pickedAction]);
-                        });
-
-                        function resolve(result) {
-                            sendMessage(`Destin :${result[0]} ${result[2]} ${result[1]}`, message);
-                        }                
+                        // Récupération de 2 noms
+                        DestinNames.findAll()
+                        .then(names => {
+                            if (names.length > 0) {
+                                console.log('Nom destin');
+                                // Take a random number betwen 0 and the number of name available
+                                let _rnd = Math.floor(Math.random() * names.length)
+                                pickedName1 = names[_rnd].name;
+                                // Take a second random number betwen 0 and the number of name available
+                                let _rnd2 = Math.floor(Math.random() * names.length)
+                                pickedName2 = names[_rnd2].name;
+                                DestinActions.findAll()
+                                .then(actions => {
+                                    if (actions.length > 0) {
+                                        console.log('Action destin');
+                                        // Take a random number betwen 0 and the number of actions available
+                                        let _rnd = Math.floor(Math.random() * actions.length)
+                                        pickedAction= actions[_rnd].action;
+                                        sendMessage(`Destin :${pickedName1} ${pickedAction} ${pickedName2}`, message);
+                                    } else {
+                                        sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
+                                    }
+                                })
+                                .catch(console.error);      
+                            } else {
+                                sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
+                            }
+                        })
+                        .catch(console.error);
+                    
                         break;
                     }
                     case '-n':
