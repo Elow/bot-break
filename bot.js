@@ -313,10 +313,12 @@ client.on("message", async message => {
                                 }
                             })
                             .catch(console.error);
+
+                            resolve([pickedName1, pickedName2, pickedAction]);
                         });
                         
                         // Generate complete sentence name + action + name2
-                        promise.then(sendMessage(`Destin :${pickedName1} ${pickedAction} ${pickedName2}`, message));                   
+                        promise.then(sendMessage(`Destin :${result[0]} ${result[2]} ${result[1]}`, message));                   
                         break;
                     }
                     case '-n':
