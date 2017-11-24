@@ -304,7 +304,7 @@ client.on("message", async message => {
                                         // Take a random number betwen 0 and the number of actions available
                                         let _rnd = Math.floor(Math.random() * actions.length)
                                         pickedAction= actions[_rnd].action;
-                                        sendMessage(`Destin :${pickedName1} ${pickedAction} ${pickedName2}`, message);
+                                        sendMessage(`Destin : \n${pickedName1} ${pickedAction} ${pickedName2}`, message);
                                     } else {
                                         sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
                                     }
