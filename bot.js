@@ -62,8 +62,12 @@ var DestinActions = sequelize.define('DestinActions', {
     whoAdded: Sequelize.STRING
 });
 
-sequelize.sync({force: config.clear_db}).then(function(err) {
-    console.log('It worked!');
+let resetdb = false;
+if (process.env.clear_db !== undefined) {
+    resetdb = true;
+}
+sequelize.sync({force: resetdb}).then(function(err) {
+    console.log('DB initialized !');
     // Populate data
     Punchlines.count()
     .then(c => {
@@ -278,116 +282,114 @@ client.on("message", async message => {
 
             if (args[0] === undefined) {
                 args[0] = 'play';
-            } else {
-                let mode = args.shift().toLowerCase();
-                switch (mode) {
-                    case 'play': {
-                        var pickedName1 = "";
-                        var pickedName2 = "";
-                        var pickedAction = "";
-                    
-                        // Récupération de 2 noms
-                        DestinNames.findAll()
-                        .then(names => {
-                            if (names.length > 0) {
-                                console.log('Nom destin');
-                                // Take a random number betwen 0 and the number of name available
-                                let _rnd = Math.floor(Math.random() * names.length)
-                                pickedName1 = names[_rnd].name;
-                                // Take a second random number betwen 0 and the number of name available
-                                let _rnd2 = Math.floor(Math.random() * names.length)
-                                pickedName2 = names[_rnd2].name;
-                                DestinActions.findAll()
-                                .then(actions => {
-                                    if (actions.length > 0) {
-                                        console.log('Action destin');
-                                        // Take a random number betwen 0 and the number of actions available
-                                        let _rnd = Math.floor(Math.random() * actions.length)
-                                        pickedAction= actions[_rnd].action;
-                                        sendMessage(`Destin : \n${pickedName1} ${pickedAction} ${pickedName2}`, message);
-                                    } else {
-                                        sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
-                                    }
-                                })
-                                .catch(console.error);      
-                            } else {
-                                sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
-                            }
-                        })
-                        .catch(console.error);
-                    
-                        break;
-                    }
-                    case '-n':
-                    case 'add_name': {
-                        if (args[0] === undefined){
-                            sendMessage(`Faut ajouter un nom espèce de gogol !`, message, true);
+            }
+            let mode = args.shift().toLowerCase();
+            switch (mode) {
+                case 'play': {
+                    var pickedName1 = "";
+                    var pickedName2 = "";
+                    var pickedAction = "";
+                
+                    // Récupération de 2 noms
+                    DestinNames.findAll()
+                    .then(names => {
+                        if (names.length > 1) {
+                            // Take a random number betwen 0 and the number of name available
+                            let _rnd = Math.floor(Math.random() * names.length);
+                            pickedName1 = names[_rnd].name;
+                            names.splice(_rnd, 1);
+                            // Take a second random number betwen 0 and the number of name available
+                            let _rnd2 = Math.floor(Math.random() * names.length);
+                            pickedName2 = names[_rnd2].name;
+                            DestinActions.findAll()
+                            .then(actions => {
+                                if (actions.length > 0) {
+                                    // Take a random number betwen 0 and the number of actions available
+                                    let _rnd = Math.floor(Math.random() * actions.length)
+                                    pickedAction= actions[_rnd].action;
+                                    sendMessage(`Destin : \n${pickedName1} ${pickedAction} ${pickedName2}`, message);
+                                } else {
+                                    sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
+                                }
+                            })
+                            .catch(console.error);      
                         } else {
-                            let nameToAdd = args.shift();
-                            DestinNames.create({name: nameToAdd, whoAdded: `${message.author.id}-${message.author.username}#${message.author.discriminator}`})
-                            .catch(console.error);
-                            sendMessage(`Le nom  "${nameToAdd}" a bien été ajouté ! `, message, true);
-                        }                       
-                        break;
-                    }
-                    case '-a':
-                    case 'add_action': {
-                        if (args[0] === undefined){
-                            sendMessage(`Faut ajouter une action espèce de gogol !`, message, true);
-                        } else {
-                            let actionToAdd = args.join(' ');
-                            DestinActions.create({action: actionToAdd, whoAdded: `${message.author.id}-${message.author.username}#${message.author.discriminator}`})
-                            .catch(console.error);
-                            sendMessage(`L'action  "${actionToAdd}" a bien été ajouté ! `, message, true);
-                        }                       
-                        break;
-                    }
-                    case '-h':
-                    case 'help': {
-                        sendMessage(`Liste des commandes du Destin : \nplay : lance une phrase random \nadd_name (ou -n) : ajoute un nom\nadd_action (ou -a) : ajoute une action\nlist_action (ou -la) : liste des actions \nlist_name (ou -ln) : liste des noms\ndel_a ID : supprime l'action avec l'ID spécifié\ndel_n ID : supprime le nom avec l'ID spécifié\nhelp (ou -h) : tu serais pas un petit peu con garçon ?`, message);
-                        break;
-                    }
-                    case '-ln':
-                    case 'list_name': {
-                        DestinNames.findAll()
-                        .then(names => {
-                            let _names = _.map(names, function(item) { return `${item.id} : ${item.name}, added by : ${item.whoAdded}` });
-                            sendMessage(`Liste des noms du Destin disponibles :\n ${_names.join(', \n ')}`, message);
-                        })
-                        .catch(console.error);
-                        break;
-                    }
-                    case '-la':
-                    case 'list_action': {
-                        DestinActions.findAll()
-                        .then(actions => {
-                            let _actions = _.map(actions, function(item) { return `${item.id} : ${item.action}, added by : ${item.whoAdded}` });
-                            sendMessage(`Liste des actions du Destin disponibles :\n ${_actions.join(', \n ')}`, message);
-                        })
-                        .catch(console.error);
-                        break;
-                    }
-                    case 'del_a': {
-                        if (args[0] === undefined){
-                            sendMessage(`Merci de spécifier un ID après la commande del_a`,message);
-                        } else {
-                            DestinActions.destroy({ where: {id: args[0]} }).catch(console.error);
-                            sendMessage(`L'action avec l'id ${args[0]} a été supprimée`,message, true);
+                            sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
                         }
-                        break;
+                    })
+                    .catch(console.error);
+                
+                    break;
+                }
+                case '-n':
+                case 'add_name': {
+                    if (args[0] === undefined){
+                        sendMessage(`Faut ajouter un nom espèce de gogol !`, message, true);
+                    } else {
+                        let nameToAdd = args.shift();
+                        DestinNames.create({name: nameToAdd, whoAdded: `${message.author.id}-${message.author.username}#${message.author.discriminator}`})
+                        .catch(console.error);
+                        sendMessage(`Le nom  "${nameToAdd}" a bien été ajouté ! `, message, true);
+                    }                       
+                    break;
+                }
+                case '-a':
+                case 'add_action': {
+                    if (args[0] === undefined){
+                        sendMessage(`Faut ajouter une action espèce de gogol !`, message, true);
+                    } else {
+                        let actionToAdd = args.join(' ');
+                        DestinActions.create({action: actionToAdd, whoAdded: `${message.author.id}-${message.author.username}#${message.author.discriminator}`})
+                        .catch(console.error);
+                        sendMessage(`L'action  "${actionToAdd}" a bien été ajouté ! `, message, true);
+                    }                       
+                    break;
+                }
+                case '-h':
+                case 'help': {
+                    sendMessage(`Liste des commandes du Destin : \nplay : lance une phrase random \nadd_name (ou -n) : ajoute un nom\nadd_action (ou -a) : ajoute une action\nlist_action (ou -la) : liste des actions \nlist_name (ou -ln) : liste des noms\ndel_a ID : supprime l'action avec l'ID spécifié\ndel_n ID : supprime le nom avec l'ID spécifié\nhelp (ou -h) : tu serais pas un petit peu con garçon ?`, message);
+                    break;
+                }
+                case '-ln':
+                case 'list_name': {
+                    DestinNames.findAll()
+                    .then(names => {
+                        let _names = _.map(names, function(item) { return `${item.id} : ${item.name}, added by : ${item.whoAdded}` });
+                        sendMessage(`Liste des noms du Destin disponibles :\n ${_names.join(', \n ')}`, message);
+                    })
+                    .catch(console.error);
+                    break;
+                }
+                case '-la':
+                case 'list_action': {
+                    DestinActions.findAll()
+                    .then(actions => {
+                        let _actions = _.map(actions, function(item) { return `${item.id} : ${item.action}, added by : ${item.whoAdded}` });
+                        sendMessage(`Liste des actions du Destin disponibles :\n ${_actions.join(', \n ')}`, message);
+                    })
+                    .catch(console.error);
+                    break;
+                }
+                case 'del_a': {
+                    if (args[0] === undefined){
+                        sendMessage(`Merci de spécifier un ID après la commande del_a`,message);
+                    } else {
+                        DestinActions.destroy({ where: {id: args[0]} }).catch(console.error);
+                        sendMessage(`L'action avec l'id ${args[0]} a été supprimée`,message, true);
                     }
-                    case 'del_n': {
-                        if (args[0] === undefined){
-                            sendMessage(`Merci de spécifier un ID après la commande del_n`,message);
-                        } else {
-                            DestinNames.destroy({ where: {id: args[0]} }).catch(console.error);
-                            sendMessage(`Le nom avec l'id ${args[0]} a été supprimé`,message, true);
-                        }
-                        break;
+                    break;
+                }
+                case 'del_n': {
+                    if (args[0] === undefined){
+                        sendMessage(`Merci de spécifier un ID après la commande del_n`,message);
+                    } else {
+                        DestinNames.destroy({ where: {id: args[0]} }).catch(console.error);
+                        sendMessage(`Le nom avec l'id ${args[0]} a été supprimé`,message, true);
                     }
-                    default: {
-                        sendMessage(`Cette commande n'existe pas sur !destin, consulter !destin -h pour de l'aide`, message);
-                    }
+                    break;
+                }
+                default: {
+                    sendMessage(`Cette commande n'existe pas sur !destin, consulter !destin -h pour de l'aide`, message);
                 }
             }
             break;
