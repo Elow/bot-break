@@ -268,6 +268,11 @@ client.on("message", async message => {
             break;
         }
         case 'destin': {
+            // Scope de mes couilles 
+            var pickedName1 = "";
+            var pickedName2 = "";
+            var pickedAction = "";
+
             if (args[0] === undefined) {
                 sendMessage(`Un paramètre est attendu, merci de consulter ${config.prefix}destin help ou -h pour l'aide.`, message);
             } else {
