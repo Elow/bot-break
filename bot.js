@@ -344,6 +344,26 @@ client.on("message", async message => {
                         sendMessage(`Liste des commandes du Destin : \nplay : lance une phrase random \nadd_name (ou -n) : ajoute un nom\nadd_action (ou -a) : ajoute une action\nhelp (ou -h) : tu serais pas un petit peu con garçon ?`, message);
                         break;
                     }
+                    case '-ln':
+                    case 'list_name': {
+                        DestinNames.findAll()
+                        .then(names => {
+                            let _names = _.map(names, function(item) { return `${item.name}` });
+                            sendMessage(`Liste des noms du Destin disponibles : ${_names.join(', \n ')}`, message);
+                        })
+                        .catch(console.error);
+                        break;
+                    }
+                    case '-la':
+                    case 'list_action': {
+                        DestinActions.findAll()
+                        .then(actions => {
+                            let _actions = _.map(actions, function(item) { return `${item.action}` });
+                            sendMessage(`Liste des actions du Destin disponibles : ${_actions.join(', \n ')}`, message);
+                        })
+                        .catch(console.error);
+                        break;
+                    }
                     default: {
                         sendMessage(`Cette commande n'existe pas sur !destin, consulter !destin -h pour de l'aide`, message);
                     }
