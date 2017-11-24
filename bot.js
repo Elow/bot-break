@@ -274,7 +274,8 @@ client.on("message", async message => {
                 let mode = args.shift().toLowerCase();
                 switch (mode) {
                     case 'play': {
-                        var pickedNames = [];
+                        var pickedName1 = "";
+                        var pickedName2 = "";
                         var pickedAction = "";
                     
                     
@@ -285,12 +286,12 @@ client.on("message", async message => {
                                 console.log('Nom destin');
                                 // Take a random number betwen 0 and the number of name available
                                 let _rnd = Math.floor(Math.random() * names.length)
-                                pickedNames.push(names[_rnd].name);
-                                sendMessage(`Debug : ${pickedNames.toString()}, ${names[_rnd].name}`, message);   
+                                pickedName1 = names[_rnd].name;
+                                sendMessage(`Debug : ${pickedName2}`, message);   
                                 // Take a second random number betwen 0 and the number of name available
                                 let _rnd2 = Math.floor(Math.random() * names.length)
-                                pickedNames.push(names[_rnd2].name);
-                                sendMessage(`Debug : ${pickedNames.toString()}, ${names[_rnd].name}`, message); 
+                                pickedName2 = names[_rnd2].name;
+                                sendMessage(`Debug : ${pickedName2}`, message); 
                             } else {
                                 sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
                             }
