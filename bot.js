@@ -304,7 +304,6 @@ client.on("message", async message => {
                                 pickedAction= actions[_rnd].action;
                             } else {
                                 sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
-                                break;
                             }
                         })
                         .catch(console.error);
