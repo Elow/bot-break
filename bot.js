@@ -287,11 +287,9 @@ client.on("message", async message => {
                                 // Take a random number betwen 0 and the number of name available
                                 let _rnd = Math.floor(Math.random() * names.length)
                                 pickedName1 = names[_rnd].name;
-                                sendMessage(`Debug : ${pickedName2}`, message);   
                                 // Take a second random number betwen 0 and the number of name available
                                 let _rnd2 = Math.floor(Math.random() * names.length)
                                 pickedName2 = names[_rnd2].name;
-                                sendMessage(`Debug : ${pickedName2}`, message); 
                             } else {
                                 sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
                             }
@@ -305,7 +303,6 @@ client.on("message", async message => {
                                 // Take a random number betwen 0 and the number of actions available
                                 let _rnd = Math.floor(Math.random() * actions.length)
                                 pickedAction= actions[_rnd].action;
-                                sendMessage(`Debug : ${pickedAction}, ${actions[_rnd].action}`, message); 
                             } else {
                                 sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
                             }
@@ -313,7 +310,7 @@ client.on("message", async message => {
                         .catch(console.error);
                     
                         // Generate complete sentence name + action + name2
-                        sendMessage(`Destin : ${pickedNames[0]} ${pickedAction} ${pickedNames[1]}`, message);                        
+                        sendMessage(`Destin :${pickedName1} ${pickedAction} ${pickedName2}`, message);                        
                         break;
                     }
                     case '-n':
