@@ -327,7 +327,7 @@ client.on("message", async message => {
                         sendMessage(`Faut ajouter un nom espèce de gogol !`, message, true);
                     } else {
                         let nameToAdd = args.shift();
-                        DestinNames.create({name: nameToAdd, whoAdded: `${message.author.id}-${message.author.username}#${message.author.discriminator}`})
+                        DestinNames.create({name: nameToAdd, whoAdded: `${message.author.username}#${message.author.discriminator}`})
                         .catch(console.error);
                         sendMessage(`Le nom  "${nameToAdd}" a bien été ajouté ! `, message, true);
                     }                       
@@ -339,7 +339,7 @@ client.on("message", async message => {
                         sendMessage(`Faut ajouter une action espèce de gogol !`, message, true);
                     } else {
                         let actionToAdd = args.join(' ');
-                        DestinActions.create({action: actionToAdd, whoAdded: `${message.author.id}-${message.author.username}#${message.author.discriminator}`})
+                        DestinActions.create({action: actionToAdd, whoAdded: `${message.author.username}#${message.author.discriminator}`})
                         .catch(console.error);
                         sendMessage(`L'action  "${actionToAdd}" a bien été ajouté ! `, message, true);
                     }                       
