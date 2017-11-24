@@ -291,7 +291,6 @@ client.on("message", async message => {
                                 pickedNames.push(names[_rnd2].name);
                             } else {
                                 sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
-                                break;
                             }
                         })
                         .catch(console.error);
