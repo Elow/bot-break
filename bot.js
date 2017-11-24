@@ -309,7 +309,7 @@ client.on("message", async message => {
                         .catch(console.error);
                     
                         // Generate complete sentence name + action + name2
-                        sendMessage(`Destin : ${pickedNames[0]} ${pickedAction} ${pickedNames[1]}`);                        
+                        sendMessage(`Destin : ${pickedNames[0]} ${pickedAction} ${pickedNames[1]}`, message);                        
                         break;
                     }
                     case '-n':
