@@ -433,7 +433,7 @@ schedule.scheduleJob("0 59 * * * *", function() {
     Subs.findAll()
     .then(subs => {
         _.each(subs, function(el) {
-            client.channels.find("id", el.chan_id).send(`ping`).catch(console.error);
+            client.channels.find("id", el.chan_id).send(`${config.prefix}ping`).catch(console.error);
         });
     })
     .catch(console.error);
