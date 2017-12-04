@@ -328,7 +328,7 @@ client.on("message", async message => {
                     if (args[0] === undefined){
                         sendMessage(`Faut ajouter un nom espèce de gogol !`, message, true);
                     } else {
-                        let nameToAdd = args.shift();
+                        let nameToAdd = args.join(' ');
                         DestinNames.create({name: nameToAdd, whoAdded: `${message.author.username}#${message.author.discriminator}`})
                         .catch(console.error);
                         sendMessage(`Le nom  "${nameToAdd}" a bien été ajouté ! `, message, true);
