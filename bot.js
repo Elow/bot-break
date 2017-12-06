@@ -15,6 +15,9 @@ const _ = require('underscore-node');
 const fetchXml = require('node-fetch');
 const fetchJson = require('node-fetch-json');
 
+// Load up the request library
+const request = require('request');
+
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
@@ -432,13 +435,10 @@ for (var i = breaks.length - 1; i >= 0; i--) {
 }
 // Keepalive
 schedule.scheduleJob("0 59 * * * *", function() {
-    Subs.findAll()
-    .then(subs => {
-        _.each(subs, function(el) {
-            client.channels.find("id", el.chan_id).send(`${config.prefix}ping`).catch(console.error);
-        });
-    })
-    .catch(console.error);
+    request(process.env.APP_URL, function (error, response, body) {
+      console.log('error:', error); // Print the error if one occurred
+      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    });
 });
 
 // Functions
