@@ -65,11 +65,10 @@ var DestinActions = sequelize.define('DestinActions', {
     whoAdded: Sequelize.STRING
 });
 
-let resetdb = false;
-if (process.env.clear_db !== undefined) {
-    resetdb = true;
-}
-sequelize.sync({force: resetdb}).then(function(err) {
+// use
+// sync({force: true})
+// when modifying DB
+sequelize.sync().then(function(err) {
     console.log('DB initialized !');
     // Populate data
     Punchlines.count()
