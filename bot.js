@@ -434,7 +434,7 @@ for (var i = breaks.length - 1; i >= 0; i--) {
     });
 }
 // Keepalive
-schedule.scheduleJob("0 59 * * * *", function() {
+schedule.scheduleJob("0 /5 * * * *", function() {
     request(process.env.APP_URL, function (error, response, body) {
       console.log('error:', error); // Print the error if one occurred
       console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
