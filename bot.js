@@ -1,3 +1,7 @@
+// Load up the file system library
+const fs = require('fs');
+const path = require('path');
+
 // Load up the discord.js library
 const Discord = require("discord.js");
 
@@ -26,61 +30,82 @@ const client = new Discord.Client();
 // Here we load the config.json file that contains our token and our prefix values.
 const config = require("./config/config.json");
 
-// Load bibliothèque de punchlines
-const punchlines = require("./config/punchlines.json");
-
 // Load break config
 const breaks = require("./config/breaks.json");
 
-// Load up sqlite library
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize('breakBot', null, null, {
-    dialect: 'sqlite',
-    storage: './bot.sqlite',
-});
-sequelize
-.authenticate()
-.then(function(err) {
-    console.log('Connection has been established successfully.');
-}, function (err) {
-    console.log('Unable to connect to the database:', err);
-});
+// Load up mongoose library
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
+mongoose.Promise = global.Promise;
+const Schema = mongoose.Schema;
 
-//  MODELS
-var Punchlines = sequelize.define('Punchlines', {
-    artist: Sequelize.STRING,
-    punchline: Sequelize.TEXT,
-    whoAdded: Sequelize.STRING,
-    createdAt: Sequelize.DATE
+// Prices
+var PricesSchema = new Schema({
+    currency: String,
+    date: {type: Date, default: Date.now},
+    value: Number
 });
-var Subs = sequelize.define('Subs', {
-    chan_id: Sequelize.STRING
-});
-var DestinNames = sequelize.define('DestinNames', {
-    name: Sequelize.STRING,
-    whoAdded: Sequelize.STRING
-});
-var DestinActions = sequelize.define('DestinActions', {
-    action: Sequelize.STRING,
-    whoAdded: Sequelize.STRING
-});
+var Prices = mongoose.model('Prices', PricesSchema);
 
-// use
-// sync({force: true})
-// when modifying DB
-sequelize.sync().then(function(err) {
-    console.log('DB initialized !');
-    // Populate data
-    Punchlines.count()
-    .then(c => {
-        if (c == 0) {
-            Punchlines.bulkCreate(punchlines.lolo).catch(console.error);
-            Punchlines.bulkCreate(punchlines.orel).catch(console.error);
-        }
-    })
-    .catch(console.error);
-}, function (err) {
-    console.log('An error occurred while creating the table:', err);
+// Punchlines
+var PunchlinesSchema = new Schema({
+    artist: String,
+    punchline: String,
+    whoAdded: String,
+    createdAt: {type: Date, default: Date.now}
+});
+var Punchlines = mongoose.model('Punchlines', PunchlinesSchema);
+
+// Subs
+var SubsSchema = new Schema({
+    chan_id: String,
+    createdAt: {type: Date, default: Date.now}
+});
+var Subs = mongoose.model('Subs', SubsSchema);
+
+// DestinNames
+var DestinNamesSchema = new Schema({
+    name: String,
+    whoAdded: String,
+    createdAt: {type: Date, default: Date.now}
+});
+var DestinNames = mongoose.model('DestinNames', DestinNamesSchema);
+
+// DestinActions
+var DestinActionsSchema = new Schema({
+    action: String,
+    whoAdded: String,
+    createdAt: {type: Date, default: Date.now}
+});
+var DestinActions = mongoose.model('DestinActions', DestinActionsSchema);
+
+// Auto bulk insert
+var db_dir = './db/';
+var constructors = {
+   Prices: Prices,
+   Punchlines: Punchlines,
+   Subs: Subs,
+   DestinNames: DestinNames,
+   DestinActions: DestinActions
+};
+fs.readdir(db_dir, function(error, files) {
+    if (error) console.error(error);
+    files.forEach(file => {
+        fs.readFile(path.join(db_dir, file), 'utf8', function(error, data) {
+            if (error) console.error(error);
+            var myObject = new constructors[file];
+            myObject.collection.count({}, function(error, c) {
+                if (c == 0) {
+                    myObject.collection.initializeOrderedBulkOp();
+                    myObject.collection.insert(JSON.parse(data), function(error, docs) {
+                        if (error) console.error(error);
+                    });
+                } else {
+                    console.log(`${file} déjà initialisé`);
+                }
+            });
+        });
+    });
 });
 
 // Global var
@@ -139,7 +164,7 @@ client.on("message", async message => {
     if (command != "ping" && message.author.id == "373101871285665803") return;
 
     // Log command
-    console.log(`----- command received from ${message.author.id} - ${message.author.username}#${message.author.discriminator}`, command);
+    console.log(`----- command received from ${message.author.id} - ${message.author.username}#${message.author.discriminator} : `, message.content);
 
     switch (command) {
         case 'ping': {
@@ -199,9 +224,11 @@ client.on("message", async message => {
             let _chan_id = message.channel.id;
             let _chans = [];
             if (!getSubById(_chan_id)) {
-                Subs.create({ chan_id: _chan_id }).then(sub => {
+                var sub = new Subs({ chan_id: _chan_id });
+                sub.save(function (error) {
+                    if (error) console.error(error);
                     sendMessage(`Ce chan va maintenant recevoir automatiquement les alertes aux pauses`, message, true);
-                }).catch(console.error);
+                });
             } else {
                 sendMessage(`Ce chan est déjà abonné aux alertes`, message, true);
             }
@@ -239,15 +266,17 @@ client.on("message", async message => {
                         } else {
                             let _artist = args.shift().toLowerCase();
                             let _punchline = args.join(' ');
-                            Punchlines.create({ artist: _artist, punchline: _punchline, whoAdded: `${message.author.id}-${message.author.username}#${message.author.discriminator}` })
-                            .catch(console.error);
+                            var punchline = new Punchlines({ artist: _artist, punchline: _punchline, whoAdded: `${message.author.id}-${message.author.username}#${message.author.discriminator}` });
+                            punchline.save(function (error) {
+                                if (error) console.error(error);
+                            });
                         }
                         break;
                     }
                     case "count": {
                         if (args[0] !== undefined) {
                             let _artist = args.shift().toLowerCase();
-                            Punchlines.count({ where: {artist: _artist} })
+                            Punchlines.count({artist: _artist})
                             .then(c => {
                                 sendMessage(`${c} punchlines correspondantes à ${_artist}`, message);
                             })
@@ -262,12 +291,11 @@ client.on("message", async message => {
                         break;
                     }
                     case "listartists": {
-                        Punchlines.findAll({ attributes: [[sequelize.fn('DISTINCT', sequelize.col('artist')), 'artist']] })
-                        .then(artists => {
-                            let _artists = _.map(artists, function(item) { return `${config.prefix}${item.artist}` });
+                        Punchlines.distinct('artist', function(error, artists) {
+                            if (error) console.error(error);
+                            let _artists = _.map(artists, function(item) { return `${config.prefix}${item}` });
                             sendMessage(`Liste des commandes disponibles : ${_artists.join(', ')}`, message);
-                        })
-                        .catch(console.error);
+                        });
                         break;
                     }
                     default: {
@@ -295,8 +323,8 @@ client.on("message", async message => {
                     var pickedAction = "";
                 
                     // Récupération de 2 noms
-                    DestinNames.findAll()
-                    .then(names => {
+                    DestinNames.find({}, function(error, names) {
+                        if (error) console.error(error);
                         if (names.length > 1) {
                             // Take a random number betwen 0 and the number of name available
                             let _rnd = Math.floor(Math.random() * names.length);
@@ -305,8 +333,7 @@ client.on("message", async message => {
                             // Take a second random number betwen 0 and the number of name available
                             let _rnd2 = Math.floor(Math.random() * names.length);
                             pickedName2 = names[_rnd2].name;
-                            DestinActions.findAll()
-                            .then(actions => {
+                            DestinActions.find({}, function(error, actions) {
                                 if (actions.length > 0) {
                                     // Take a random number betwen 0 and the number of actions available
                                     let _rnd = Math.floor(Math.random() * actions.length)
@@ -315,13 +342,11 @@ client.on("message", async message => {
                                 } else {
                                     sendMessage(`Faut ajouter des actions pour que ça marche !!!`, message, true);
                                 }
-                            })
-                            .catch(console.error);      
+                            });
                         } else {
                             sendMessage(`Faut ajouter des noms pour que ça marche !!!`, message, true);
                         }
-                    })
-                    .catch(console.error);
+                    });
                 
                     break;
                 }
@@ -331,9 +356,11 @@ client.on("message", async message => {
                         sendMessage(`Faut ajouter un nom espèce de gogol !`, message, true);
                     } else {
                         let nameToAdd = args.join(' ');
-                        DestinNames.create({name: nameToAdd, whoAdded: `${message.author.username}#${message.author.discriminator}`})
-                        .catch(console.error);
-                        sendMessage(`Le nom  "${nameToAdd}" a bien été ajouté ! `, message, true);
+                        var destin = new DestinNames({name: nameToAdd, whoAdded: `${message.author.username}#${message.author.discriminator}`});
+                        destin.save(function (error) {
+                            if (error) console.error(error);
+                            sendMessage(`Le nom  "${nameToAdd}" a bien été ajouté ! `, message, true);
+                        });
                     }                       
                     break;
                 }
@@ -343,9 +370,11 @@ client.on("message", async message => {
                         sendMessage(`Faut ajouter une action espèce de gogol !`, message, true);
                     } else {
                         let actionToAdd = args.join(' ');
-                        DestinActions.create({action: actionToAdd, whoAdded: `${message.author.username}#${message.author.discriminator}`})
-                        .catch(console.error);
-                        sendMessage(`L'action  "${actionToAdd}" a bien été ajouté ! `, message, true);
+                        var destin = new DestinActions({action: actionToAdd, whoAdded: `${message.author.username}#${message.author.discriminator}`});
+                        destin.save(function (error) {
+                            if (error) console.error(error);
+                            sendMessage(`L'action  "${actionToAdd}" a bien été ajouté ! `, message, true);
+                        });
                     }                       
                     break;
                 }
@@ -356,29 +385,25 @@ client.on("message", async message => {
                 }
                 case '-ln':
                 case 'list_name': {
-                    DestinNames.findAll()
-                    .then(names => {
+                    DestinNames.find({}, function (error, names) {
                         let _names = _.map(names, function(item) { return `${item.id} : ${item.name}, added by : ${item.whoAdded}` });
                         sendMessage(`Liste des noms du Destin disponibles :\n ${_names.join(', \n ')}`, message);
-                    })
-                    .catch(console.error);
+                    });
                     break;
                 }
                 case '-la':
                 case 'list_action': {
-                    DestinActions.findAll()
-                    .then(actions => {
+                    DestinActions.find({}, function (error, actions) {
                         let _actions = _.map(actions, function(item) { return `${item.id} : ${item.action}, added by : ${item.whoAdded}` });
                         sendMessage(`Liste des actions du Destin disponibles :\n ${_actions.join(', \n ')}`, message);
-                    })
-                    .catch(console.error);
+                    });
                     break;
                 }
                 case 'del_a': {
                     if (args[0] === undefined){
                         sendMessage(`Merci de spécifier un ID après la commande del_a`,message);
                     } else {
-                        DestinActions.destroy({ where: {id: args[0]} }).catch(console.error);
+                        DestinActions.remove({id: args[0]}).catch(console.error);
                         sendMessage(`L'action avec l'id ${args[0]} a été supprimée`,message, true);
                     }
                     break;
@@ -387,7 +412,7 @@ client.on("message", async message => {
                     if (args[0] === undefined){
                         sendMessage(`Merci de spécifier un ID après la commande del_n`,message);
                     } else {
-                        DestinNames.destroy({ where: {id: args[0]} }).catch(console.error);
+                        DestinNames.remove({id: args[0]}).catch(console.error);
                         sendMessage(`Le nom avec l'id ${args[0]} a été supprimé`,message, true);
                     }
                     break;
@@ -400,10 +425,9 @@ client.on("message", async message => {
         }
         default: {
             // Check if it's a punchline command
-            Punchlines.findAll({ where: {artist: command} })
-            .then(punchlines => {
+            Punchlines.find({artist: command}, function(error, punchlines) {
+                if (error) console.error(error);
                 if (punchlines.length > 0) {
-                    console.log('punchline');
                     let _msg = "";
                     // Take a random number betwen 0 and the number of punchlines available
                     let _rnd = Math.floor(Math.random() * punchlines.length)
@@ -413,8 +437,7 @@ client.on("message", async message => {
                 } else {
                     sendMessage(`Wech c'est pas une commande ça poto ...`, message, true);
                 }
-            })
-            .catch(console.error);
+            });
         }
     }
 });
@@ -443,10 +466,10 @@ schedule.scheduleJob("0 /5 * * * *", function() {
 
 // Functions
 var unSub = function (_chan_id) {
-    Subs.destroy({ where: {chan_id: _chan_id} }).catch(console.error);
+    Subs.remove({chan_id: _chan_id}).catch(console.error);
 }
 var getSubById = function(_chan_id) {
-    Subs.findOne({ where: {chan_id: _chan_id} })
+    Subs.findOne({chan_id: _chan_id})
     .then(sub => {
         console.log(!sub);
         return sub;
