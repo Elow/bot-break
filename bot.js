@@ -197,7 +197,7 @@ client.on("message", async message => {
 
             fetchJson(url)
             .then(function(data) {
-                sendMessage(`A ${city}, la temperature extérieur est de ${data.main.temp}°C, avec un vent de ${data.wind.speed}km/h`, message);
+                sendMessage(`A ${city}, la temperature extérieur est de ${data.main.temp}°C, avec un vent de ${data.wind.speed}km/h, ${data.wind.deg}°.\nCondition météo : ${data.weather.main}, ${data.weather.description}.\nTaux d'humidité : ${data.weather.humidity}.\nPression atmosphérique : ${data.weather.pressure}.`, message);
             })
             .catch(function() {
                 sendMessage(`Erreur appel API pour la ville ${city}`, message);
