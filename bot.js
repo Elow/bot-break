@@ -193,11 +193,11 @@ client.on("message", async message => {
             }
 
             let weather = "";
-            let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${process.env.WEATHER_TOKEN}&units=metric`;
+            let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${process.env.WEATHER_TOKEN}&units=metric&lang=fr`;
 
             fetchJson(url)
             .then(function(data) {
-                sendMessage(`A ${city}, la temperature extérieur est de ${data.main.temp}°C, avec un vent de ${data.wind.speed}km/h, ${data.wind.deg}°.\nCondition météo : ${data.weather[0].main}, ${data.weather[0].description}.\nTaux d'humidité : ${data.main.humidity}.\nPression atmosphérique : ${data.main.pressure}.`, message);
+                sendMessage(`A ${city}, la temperature extérieur est de ${data.main.temp}°C, avec un vent de ${data.wind.speed}km/h, ${data.wind.deg}°.\nCondition météo : ${data.weather[0].main}, ${data.weather[0].description}.\nTaux d'humidité : ${data.main.humidity}%.\nPression atmosphérique : ${data.main.pressure}hPa.`, message);
             })
             .catch(function() {
                 sendMessage(`Erreur appel API pour la ville ${city}`, message);
